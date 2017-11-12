@@ -42,7 +42,7 @@ int main(void)
 	
 
         double *x0, *y0, *u_in, *u_fut, *u_past, *u_present;
-        rc = c*(delta_x/delta_t);
+        rc = 0.0049;
         x0=malloc(N*sizeof(double));
 	y0=malloc(N*sizeof(double));
 
@@ -50,18 +50,23 @@ int main(void)
 
         u_in=y0;
         u_fut=malloc(N*sizeof(double));
+
+	first_iteration(u_fut, u_in, N, rc);
         
-        first_iteration(u_fut, u_in, N, rc);
-        
-        u_past=u_in;
-        u_present=u_fut;
-        
-        iteration(u_fut, u_present, u_past, N, rc);
-        u_present=u_fut;
-        
-	for(i=0;i<N;i++)
+        	u_past=u_in;
+        	u_present=u_fut;
+
+        int j;
+
+        for(i=1;i<N-1;i++)
 	{
-		printf("%lf",u_present[i]);
+                u_fut[0]=0;
+		iteration(u_fut, u_present, u_past, N, rc);
+        	u_present=u_fut;
+ 		for(j=0;i<N;i++)
+		{
+			printf("%lf",u_present[j]);
+		}       
 	}
 	return 0;
 }
