@@ -2,17 +2,22 @@
 #include <math.h>
 #include <stdlib.h>
 
-void load_data(double *x, double *y);
-void first_iteration(double *u_future, double *u_initial, int n_puntos, double r);
-void iteration(double *u_future, double *u_present, double *u_past, int n_puntos, double r);
+/* declaracion constantes */
+
 int N=129;
 float c=250;
 float L=0.64;
 char *name;
 double *x_data, *y_data;
+float delta_t =1/129;
+float delta_x =0.005;
+double rc;
 
+/* declaracion funciones */
 
-
+void load_data(double *x, double *y);
+void first_iteration(double *u_future, double *u_initial, int n_puntos, double r);
+void iteration(double *u_future, double *u_present, double *u_past, int n_puntos, double r);
 
 
 int main(void)
@@ -26,18 +31,69 @@ int main(void)
 	for(i=0;i<N;i++)
 	{
 		printf("%lf",x_data[i]);
-                
 	}
-        printf("hasta aqui funciona\n");
+        
         for(i=0;i<N;i++)
 	{
                 
                 printf("%lf",y_data[i]);
 	}
+	printf("hasta aqui funciona\n");
+	
 
-    return 0;
+        double *x0, *y0, *u_in, *u_fut, *u_past, *u_present;
+        rc = c*(delta_x/delta_t);
+        x0=malloc(N*sizeof(double));
+	y0=malloc(N*sizeof(double));
+
+        load_data(x0,y0);
+
+        u_in=y0;
+        u_fut=malloc(N*sizeof(double));
+        
+        first_iteration(u_fut, u_in, N, rc);
+        
+        u_past=u_in;
+        u_present=u_fut;
+        
+        iteration(u_fut, u_present, u_past, N, rc);
+        u_present=u_fut;
+        
+	for(i=0;i<N;i++)
+	{
+		printf("%lf",u_present[i]);
+	}
+	return 0;
 }
 
+
+void condInic(void)
+{
+	double *x0, *y0, *u_in, *u_fut, *u_past, *u_present;
+        rc = c*(delta_x/delta_t);
+        x0=malloc(N*sizeof(double));
+	y0=malloc(N*sizeof(double));
+
+        load_data(x0,y0);
+
+        u_in=y0;
+        u_fut=malloc(N*sizeof(double));
+        
+        first_iteration(u_fut, u_in, N, rc);
+        
+        u_past=u_in;
+        u_present=u_fut;
+        
+        iteration(u_fut, u_present, u_past, N, rc);
+        u_present=u_fut;
+        
+        int i;
+	for(i=0;i<N;i++)
+	{
+		printf("%lf",u_present[i]);
+	}
+
+ }
 
 
 void load_data(double *x, double *y)
@@ -59,6 +115,7 @@ void load_data(double *x, double *y)
         i += 1;
     }
 }
+
 
 
 
